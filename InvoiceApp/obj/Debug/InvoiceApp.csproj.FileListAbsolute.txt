@@ -93,8 +93,8 @@ D:\InvoiceAplication\InvoiceApp\InvoiceApp\bin\es\System.Web.WebPages.resources.
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\bin\es\System.Web.WebPages.Deployment.resources.dll
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\bin\es\System.Web.WebPages.Razor.resources.dll
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\bin\es\System.Web.Optimization.resources.dll
+D:\InvoiceAplication\InvoiceApp\InvoiceApp\obj\Debug\InvoiceApp.csproj.AssemblyReference.cache
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\obj\Debug\InvoiceApp.csproj.CoreCompileInputs.cache
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\obj\Debug\InvoiceApp.csproj.CopyComplete
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\obj\Debug\InvoiceApp.dll
 D:\InvoiceAplication\InvoiceApp\InvoiceApp\obj\Debug\InvoiceApp.pdb
-D:\InvoiceAplication\InvoiceApp\InvoiceApp\obj\Debug\InvoiceApp.csproj.AssemblyReference.cache
