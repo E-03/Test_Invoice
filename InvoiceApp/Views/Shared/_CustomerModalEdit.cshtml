@@ -1,0 +1,113 @@
+﻿@model InvoiceApp.Dto.CustomersDto
+
+@{
+    Layout = null;
+    ViewBag.EditCustomerTypeDD = (SelectList)ViewData["EditCustomerTypeDD"];
+    //ViewBag.fillCustomerStatus = (SelectList)ViewData["fillCustomerStatus"];
+}
+<!-- Modal Edit Customers -->
+<button type="button" id="editModal" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop" hidden></button>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Ajax.BeginForm("PutCustomer", "Customers", new AjaxOptions() { OnComplete = "OnCompletedEdit", HttpMethod = "Patch" }, new { @id = "frmEditCustomer" }))
+            {
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="bs-callout">
+                        <div class="form-horizontal">
+                            <div><strong>Editar Cliente</strong></div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Id, htmlAttributes: new { @class = "control-label col-md-6" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.Id, new { htmlAttributes = new { @class = "form-control", @disabled="disabled" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CustName, htmlAttributes: new { @class = "control-label col-md-6" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.CustName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Adress, htmlAttributes: new { @class = "control-label col-md-6" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.Adress, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CustomerTypeId, htmlAttributes: new { @class = "control-label col-md-6" })
+                                        <div class="col-md-10">
+                                            @Html.DropDownList("CustomerTypeId", (SelectList)ViewBag.EditCustomerTypeDD, "--Seleccione--", new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-6" })
+                                            <div class="col-md-10">
+                                                @Html.DropDownListFor(p => p.Status, new SelectListItem(new SelectList { SelectedValue = Model.Status} ), new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            @*<div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Modificar" style="background-color:darkred; color:white; font-weight:bold" class="btn btn-warning" />
+                                    </div>
+                                </div>*@
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" value="Modificar" style="background-color:darkred; color:white; font-weight:bold" class="btn btn-warning" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    //$(document).ready(function () {
+    //    console.log("ready!");
+    //});
+
+    function OnCompletedEdit(data) {
+        if (data.status === 200 && data.responseJSON.message !== null)
+        {
+            alert(data.responseJSON.message)
+            window.location.href = "/Customers/ListadoPage";
+            return;
+        }
+
+        return alert("Error: " + data.responseJSON.message)
+    }
+
+
+</script>
+
+

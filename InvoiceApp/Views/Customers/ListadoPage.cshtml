@@ -1,0 +1,242 @@
+﻿@model InvoiceApp.Dto.CustomersDto
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .bs-callout {
+        padding: 20px;
+        margin: 20px 0;
+        border: 1px solid black;
+        border-left-color: green;
+        border-left-width: 5px;
+        border-radius: 3px;
+    }
+
+    #CustomerTypeId {
+        height: 40px;
+        width: 100%;
+        border: 1px solid thin;
+        border-radius: 6px;
+        border-color: grey;
+    }
+</style>
+
+<h1>Cliente</h1>
+
+<div class="bs-callout">
+
+    <div class="form-horizontal">
+        <div>Listado Cliente</div>
+        <hr />
+
+        <table id="table_list" style="width:100%" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(p => p.CustName)</th>
+                    <th>@Html.DisplayNameFor(p => p.Adress)</th>
+                    <th>@Html.DisplayNameFor(p => p.Status)</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div id="modal_invoice">
+    @Html.Partial("~/Views/Shared/_InvoicesModal.cshtml", new InvoiceApp.Dto.InvoiceWithDetailDto())
+</div>
+
+<div id="modal_customer">
+    @Html.Partial("~/Views/Shared/_CustomerModalEdit.cshtml", Model, new ViewDataDictionary { { "EditCustomerTypeDD", ViewBag.EditCustomerTypeDD } })
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+
+<script>
+    $(document).ready(function () {
+        console.log("table")
+        $('#table_list').DataTable({
+            destroy: true,
+            scrollX: true,
+            ajax: {
+                url: "/Customers/GetCustomers",
+                async: true,
+                type: 'Get',
+                contentType: 'application/json',
+                dataType: 'json',
+                dataSrc: '',
+            },
+            columns: [
+                { data: 'CustName', width: '350px', orderable: true, visible: true },
+                { data: 'Adress', width: '350px', orderable: true, visible: true },
+                {
+                    data: 'Status', width: '350px', orderable: true, visible: true, render: function (v, t, r) {
+                        return v === false ? "Inactivo" : "Activo"
+                    }
+                },
+                {
+                    data: 'Id', width: '350px', orderable: true, visible: true, render: function (value, type, row) {
+                        return `<span><button class="btn btn-warning" onclick="editCustomer(${value})"><i class="bi bi-pencil-square"></i></button></span>
+                                <span><button class="btn btn-success" onclick="InvoiceCustomer(${value})"><i class="bi bi-cart-check-fill"></i></button></span>`;
+                              /*  <span><button class="btn btn-danger" onclick="DeleteCustomer(${value})"><i class="bi bi-trash2-fill"></i></button></span>*/
+                    }
+                }
+            ],
+            initComplete: function (settings, json) {
+                $(window).resize();
+            }
+        })
+        console.log("ready last")
+    });
+
+
+    function InvoiceCustomer(ClienteId) {
+        let url = '@Url.Action("GetOneCustomers", "Customers")?id=' + ClienteId;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: true,
+            contentType: 'application/json',
+            success: function (response) {
+                $("#InvoiceCustomerId").val(response.Id);
+                $("#InvoiceCustomerName").val(response.CustName);
+
+                $("#InvoiceModal").trigger("click");
+
+                console.log("invoice", response)
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function DeleteCustomer(ClienteId) {
+
+    }
+
+    function editCustomer(id) {
+        let url = '@Url.Action("GetOneCustomers", "Customers")?id='+ id;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            async: true,
+            contentType: 'application/json',
+            success: function (response) {
+                $("#Id").val(response.Id);
+                $("#CustName").val(response.CustName);
+                $("#Adress").val(response.Adress);
+                $("#Status").val(response.Status);
+                $("#CustomerTypeId").val(response.CustomerTypeId);
+
+                $("#editModal").trigger("click");
+
+                console.log("Saved", response)
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    $("#invoiceModalClose").on("click", function () {
+        window.location.href = '/Customers/ListadoPage'
+    })
+
+
+    let index = 0;
+    $("#add_new_detail").on("click", function () {
+
+        let tableTd = `<td><input type="text" id="quantity" class="form-control" placeholder="Cantidad"/></td>
+            <td><input type="text" id="price" class="form-control" placeholder="Precio"/></td>`;
+            //<td><input type="button" value="Eliminar" id="btn" class="btn btn-outline-danger" class="delete_invoice"/></td>;
+
+        $("#table_detail").append("<tr>").append(tableTd);
+        index++;
+
+    })
+
+    let invoiceAndDetail = {
+        CustomerId: 0,
+        TotalItbis: 0,
+        SubTotal: 0,
+        Total: 0,
+        InvoiceDetailDto: []
+    }
+
+
+    $("body").on("click", "#btn", function () {
+        console.log($(this))
+        console.log("Parents Body", $(this).parents("#row"))
+        //$(this).closest('tr').remove();
+        $(this).parents("#row").remove();
+    })
+
+
+
+    $("body").on("click", "#save_invoice", function () {
+        ;
+        console.log("save_invoice");
+
+        let InvoiceDetailDto = [];
+        $("body #price").each(function (e, r) {
+            
+            let price = $(this).val();
+
+            $("body #quantity").each(function () {
+                let qty = $(this).val();
+
+                let invoiceDetail = {
+                    Id: 0,
+                    CustomerId: $("body #InvoiceCustomerId").val(),
+                    Qty: qty,
+                    Price: price,
+                    TotalItbis: 0,
+                    SubTotal: 0,
+                    Total: 0
+                }
+
+                InvoiceDetailDto.push(invoiceDetail);
+                console.log("InvoiceDetailDto",InvoiceDetailDto);
+            })
+        })
+
+        let InvoiceWithDetailDto = {
+            Id: 0,
+            CustomerId: $("body #InvoiceCustomerId").val(),
+            TotalItbis: 0,
+            SubTotal: 0,
+            Total: 0,
+            InvoiceDetailDto: InvoiceDetailDto
+        }
+        console.log("dto.InvoiceDetailDto", InvoiceWithDetailDto.InvoiceDetailDto)
+
+        let url = '@Url.Action("SaveInvoiceWithDetail", "Invoice")';
+
+        $.ajax({
+            url: url,
+            type: 'post',
+            data: { InvoiceWithDetailDto },
+            dataType: 'json',
+            success: function (response) {
+                alert(response.message);
+                window.location.href = '/Customers/ListadoPage';
+                console.log("Saved", response)
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+    });
+
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+
+@Scripts.Render("~/bundles/bootstrap")
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
