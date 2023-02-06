@@ -89,11 +89,12 @@ namespace InvoiceApp.Data
             try
             {
                 bool updated = false;
+                customers.Status = true;
                 var customerMapper = Mapper.Map<CustomersDto, Customers>(customers);
 
                 var isUpdated = await _repo.Customers.Modify(customerMapper);
 
-                if (isUpdated.Equals(0))
+                if (!isUpdated)
                     throw new Exception($"Error al modificar el registro con el id: {customerMapper.Id}.");
 
                 updated = true;

@@ -127,7 +127,7 @@ namespace InvoiceApp.Controllers
             }
         }
 
-        [HttpPatch]
+        [HttpPost]
         public async Task<ActionResult> PutCustomer(CustomersDto dto)
         {
             try

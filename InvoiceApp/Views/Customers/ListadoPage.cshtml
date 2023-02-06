@@ -62,7 +62,6 @@
             scrollX: true,
             ajax: {
                 url: "/Customers/GetCustomers",
-                async: true,
                 type: 'Get',
                 contentType: 'application/json',
                 dataType: 'json',
@@ -97,7 +96,6 @@
         $.ajax({
             url: url,
             type: 'GET',
-            async: true,
             contentType: 'application/json',
             success: function (response) {
                 $("#InvoiceCustomerId").val(response.Id);
@@ -149,8 +147,8 @@
     let index = 0;
     $("#add_new_detail").on("click", function () {
 
-        let tableTd = `<td><input type="text" id="quantity" class="form-control" placeholder="Cantidad"/></td>
-            <td><input type="text" id="price" class="form-control" placeholder="Precio"/></td>`;
+        let tableTd = `<td><input type="number" id="quantity" class="form-control" placeholder="Cantidad"/></td>
+            <td><input type="number" id="price" class="form-control" placeholder="Precio"/></td>`;
             //<td><input type="button" value="Eliminar" id="btn" class="btn btn-outline-danger" class="delete_invoice"/></td>;
 
         $("#table_detail").append("<tr>").append(tableTd);
@@ -177,7 +175,7 @@
 
 
     $("body").on("click", "#save_invoice", function () {
-        ;
+        
         console.log("save_invoice");
 
         let InvoiceDetailDto = [];

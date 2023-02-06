@@ -91,11 +91,8 @@ namespace InvoiceApp.Data
             
                 var customerTypes = Mapper.Map<CustomerTypesDto, CustomerTypes>(model);
 
-                var isUpdated = await _repo.CustomerTypes.Modify(customerTypes);
+                _repo.CustomerTypes.Modify(customerTypes);
                 
-                if(isUpdated.Equals(0))
-                    throw new Exception($"Error al modificar el registro con el id: {customerTypes.Id}.");
-
                 updated = true;
                 
                 return updated;
